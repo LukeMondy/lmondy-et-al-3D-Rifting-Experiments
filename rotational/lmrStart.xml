@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<lmr:LMRStarterKit xmlns:lmr="https://bitbucket.org/lmondy/lithosphericmodellingrecipe" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="file:./LMR.xsd">
+    
+    <Output_Controls>
+        <description> geoscis_03_smallnotch_mg5 </description>
+
+        <model_resolution>
+            <x> 256 </x>
+            <y> 512 </y>
+            <z> 96 </z>
+        </model_resolution>
+
+        <experiment_duration_options>
+            <maximum_timesteps> 1000000 </maximum_timesteps>
+            <maximum_time_in_years> 20e6 </maximum_time_in_years>
+        </experiment_duration_options>
+        
+        <checkpoint_frequency_options>
+            <every_x_years> 50000 </every_x_years>
+            <every_x_timesteps> 10000000 </every_x_timesteps>
+        </checkpoint_frequency_options>
+        
+        <output_pictures> false </output_pictures>
+        <write_log_file> true </write_log_file>
+    </Output_Controls>
+    
+    <Thermal_Equilibration>
+        <run_thermal_equilibration_phase> true </run_thermal_equilibration_phase>
+        
+        <update_xml_information> true </update_xml_information>
+        <preserve_thermal_equilibration_checkpoints> false </preserve_thermal_equilibration_checkpoints>
+
+        <output_controls>
+            <description> laterally_homog_lores </description>
+            
+            <thermal_model_resolution>
+                <x> 12 </x>
+                <y> 12 </y>
+                <z> 32 </z>
+            </thermal_model_resolution>
+
+            <experiment_duration_options>
+                <maximum_timesteps> 100000000 </maximum_timesteps>
+                <maximum_time_in_years> 1000.0e6 </maximum_time_in_years>
+            </experiment_duration_options>
+
+            <checkpoint_frequency_options>
+                <every_x_years> 50.0e6 </every_x_years>
+                <every_x_timesteps> 100000000 </every_x_timesteps>
+            </checkpoint_frequency_options>
+        </output_controls>   
+    </Thermal_Equilibration>
+
+
+    <Restarting_Controls>
+        <restart> false </restart>
+        <!--restart_from_step> 303 </restart_from_step--> 
+    </Restarting_Controls>
+
+    <Solver_Details>
+	<linear_solver>
+	    <tolerance> 1e-5 </tolerance>
+	    <min_iterations> 2 </min_iterations>
+	    <max_iterations> 15000 </max_iterations>
+	</linear_solver>
+
+	<nonLinear_solver>
+	    <tolerance> 1e-3 </tolerance>
+	    <min_iterations> 2 </min_iterations>
+	    <max_iterations> 500 </max_iterations>
+	</nonLinear_solver>
+
+	<force_multigrid_level_to_be> 5 </force_multigrid_level_to_be> <!-- Set this to be >0 for effect -->
+
+	<force_multigrid_solve> false </force_multigrid_solve>
+	<force_direct_solve> false </force_direct_solve>
+    </Solver_Details>
+
+    <Underworld_Execution>
+       <Underworld_binary> /group/partner985/software/underworld2_intel/libUnderworld/build/bin/Underworld </Underworld_binary> <!-- Replace with your own path to UW -->
+        <CPUs> 6 </CPUs>
+        <supercomputer_mpi_format> true </supercomputer_mpi_format>
+	<!--parallel_command> aprun -B </parallel_command-->
+	<parallel_command> aprun -n 768 -N 24 </parallel_command>
+	<verbose_run> true </verbose_run>
+    </Underworld_Execution>
+
+</lmr:LMRStarterKit>

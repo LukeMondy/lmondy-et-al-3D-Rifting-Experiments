@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StGermainData xmlns="http://www.vpac.org/StGermain/XML_IO_Handler/Jun2003">
+
+    <struct name="velocityBCs">
+        <param name="type"> CompositeVC </param>
+        <list name="vcList">
+            <struct>
+                <param name="type"> WallVC </param>
+                <param name="wall"> MinI </param>
+                <list name="variables">
+                    <struct>
+                        <param name="name"> vx </param>
+                        <param name="type"> double </param>
+                        <param name="value" units="cm/yr"> -1.375 </param>
+                    </struct>
+                </list>
+            </struct>
+
+            <struct>
+                <param name="type"> WallVC </param>
+                <param name="wall"> MaxI </param>
+                <list name="variables">
+                    <struct>
+                        <param name="name"> vx </param>
+                        <param name="type"> double </param>
+                        <param name="value" units="cm/yr"> 1.375 </param>
+                    </struct>
+                </list>
+            </struct>
+            
+            <!-- NOTE: The 'front' and 'back' walls are only activated when in 
+                  3D. The definitions below are for free-slip, no outflow. -->
+            <struct>
+                <param name="type"> WallVC </param>
+                <param name="wall"> MinJ </param>
+                <list name="variables">
+                    <struct>
+                        <param name="name"> vy </param>
+                        <param name="type"> double </param>
+                        <param name="value" units="cm/yr"> 0.0 </param>
+                    </struct>
+                </list>
+            </struct>
+            
+            <struct>
+                <param name="type"> WallVC </param>
+                <param name="wall"> MaxJ </param>
+                <list name="variables">
+                    <struct>
+                        <param name="name"> vy </param>
+                        <param name="type"> double </param>
+                        <param name="value" units="cm/yr"> 0.0 </param>
+                    </struct>
+                </list>
+            </struct>
+
+            <struct>
+                <param name="type"> WallVC </param>
+                <param name="wall"> MinK </param>
+                <list name="variables">
+                    <struct>
+                        <param name="name"> vz </param>
+                        <param name="type"> func </param>
+                        <param name="value"> lecode_tools_Isostasy </param>
+                    </struct>
+                </list>
+            </struct>
+        </list>
+    </struct>
+    
+    
+    <!-- === Example Ppc function for wallVC ============= -->
+    <!-- The following structs define a time dependent wall VC, where between
+         t=0 and t=1myr, the wall velocity increases from 0 to -2.0 cm/yr. 
+         Note that the speed increase is linearly interpolated between one
+         case to the next (hence the 'l' for linear in the "Interpolate"
+         param).
+         
+         To use this function, change the left wallVC "type" to be "func", and 
+         set the "value" to be "left-wall-VC" (and get rid of any units). -->
+         
+    <struct name="components" mergeType="merge">
+        <struct name="long_wall">
+            <param name="Type"> Ppc_Coord </param>
+            <param name="Axis"> 1 </param>
+        </struct>
+        
+        <struct name="left_wall_VC">
+            <param name="Type"> Ppc_Switch </param>
+            <param name="Field"> long_wall </param>
+            <param name="Interpolate"> l </param>
+            <list name="CaseList">
+                <struct>
+                    <param name="Case" units="km"> 0 </param>
+                    <param name="Value" units="cm/yr"> -0.25 </param>
+                </struct>
+                <struct>
+                    <param name="Case" units="km"> 1000 </param>
+                    <param name="Value" units="cm/yr"> -2.5 </param>
+                </struct>
+            </list>
+        </struct>
+
+        <struct name="right_wall_VC">
+            <param name="Type"> Ppc_Operation </param>
+            <param name="Operation"> * </param>
+            <list name="Properties">
+                <param> left_wall_VC </param>
+                <param> -1.0 </param>
+            </list>
+        </struct>
+    </struct>
+    
+    
+    <!--=== Isostasy functionality ========================== -->
+    <list name="plugins" mergeType="merge">
+        <struct>
+            <!-- === Commonly modified ================== -->
+            <param name="rhoZeroMaterial">mantle</param>
+            <param name="UseAverage">False</param>
+            <!-- ======================================== -->
+            <param name="Type"> lecode_tools_Isostasy </param>
+            <param name="Context"> context </param>
+            <param name="mesh"> linearMesh </param>
+            <param name="VerticalAxis"> @VerticalAxis </param>
+            <param name="SurfaceIndex"> @elementResK </param>
+            <param name="swarm"> picIntegrationPoints </param>
+            <param name="velocityField"> VelocityField </param>
+            <param name="sle"> stokesEqn </param>
+            <param name="Manager"> default_ppcManager </param>
+            <param name="DensityLabel"> DensityProperty </param>
+            <param name="MaxIterations"> -1 </param>
+        </struct>
+    </list>
+    <!--===================================================== -->
+    
+</StGermainData>
+
+
